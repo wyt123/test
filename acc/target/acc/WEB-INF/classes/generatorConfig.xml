@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd" >
+<generatorConfiguration>
+	<!-- 这是用来生成mybatis的文件（pojo类,mapper.xml和dao类），
+	在maven输入 mybatis-generator:generate指令就行，会自动匹配里面的数据库 -->
+	<classPathEntry location="D:\java\maven\repo\mysql\mysql-connector-java\5.1.31\mysql-connector-java-5.1.31.jar" />
+	<context id="context1" targetRuntime="MyBatis3">
+		<commentGenerator>
+			<!-- 是否去除自动生成的注释 true：是 ： false:否 -->
+			<property name="suppressAllComments" value="fasle" />
+		</commentGenerator>
+
+		<jdbcConnection driverClass="com.mysql.jdbc.Driver"
+			connectionURL="jdbc:mysql://localhost:3306/accountdb" userId="root"
+			password="" />
+		<javaModelGenerator targetPackage="com.wyt.pojo"
+			targetProject="D:\java\workspace3\acc\src\main\java" />
+
+		<sqlMapGenerator targetPackage="com.wyt.mapping"
+			targetProject="D:\java\workspace3\acc\src\main\java" />
+
+		<javaClientGenerator type="XMLMAPPER"
+			targetPackage="com.wyt.dao"
+			targetProject="D:\java\workspace3\acc\src\main\java">
+		</javaClientGenerator>
+
+		<table tableName="account" domainObjectName="Account"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false"
+			selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="true" />
+		</table>
+		<table tableName="acctype" domainObjectName="AccType"
+			enableCountByExample="false" enableUpdateByExample="false"
+			enableDeleteByExample="false" enableSelectByExample="false"
+			selectByExampleQueryId="false">
+			<property name="useActualColumnNames" value="true" />
+		</table>
+	</context>
+</generatorConfiguration>

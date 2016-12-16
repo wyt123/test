@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context-3.2.xsd
+    http://www.springframework.org/schema/tx
+    http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+    http://www.springframework.org/schema/aop
+    http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+	<!-- 引入jdbc配置文件 --><!-- 这种classpath直接写路径的是相对路径，如果在另一个文件下要写出来 -->
+    <context:property-placeholder location="classpath:jdbc.properties"/>
+   	<!--本示例采用DBCP连接池。 连接池配置如下 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="${jdbc_driverClassName}" />
+		<property name="url" value="${jdbc_url}" />
+		<property name="username" value="${jdbc_username}" />
+		<property name="password" value="${jdbc_password}" />
+	</bean>
+
+	<!-- mybatis文件配置，扫描所有mapper.xml文件 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean"
+		p:dataSource-ref="dataSource" 
+		p:mapperLocations="classpath:com/wyt/mapping/*Mapper.xml" /><!-- configLocation为mybatis属性 
+		mapperLocations为所有mapper -->
+  
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">  
+    	<!-- 扫描所有的dao接口 -->
+        <property name="basePackage" value="com.wyt.dao" />  
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />  
+    </bean>  
+  
+    <!-- 配置事务管理器 -->  
+    <bean id="transactionManager"  
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager">  
+        <property name="dataSource" ref="dataSource" />  
+    </bean>  
+  
+    <!-- 注解方式配置事物 -->  
+	<tx:annotation-driven transaction-manager="transactionManager" />
+  
+    <!-- 拦截器方式配置事物 -->  
+  <tx:advice id="transactionAdvice" transaction-manager="transactionManager">  
+        <tx:attributes>  
+            <tx:method name="insert*" propagation="REQUIRED" />  
+            <tx:method name="update*" propagation="REQUIRED" />  
+            <tx:method name="delete*" propagation="REQUIRED" />  
+  
+            <tx:method name="get*" propagation="SUPPORTS" read-only="true" />  
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true" />  
+            <tx:method name="select*" propagation="SUPPORTS" read-only="true" />  
+  
+        </tx:attributes>  
+    </tx:advice>   
+    <!-- Spring aop事务管理 -->  
+ <!--  <aop:config>  
+        <aop:pointcut id="transactionPointcut"  
+            expression="execution(* com.wyt.service.impl.*)" />  
+        <aop:advisor pointcut-ref="transactionPointcut"  
+            advice-ref="transactionAdvice" />  
+    </aop:config> -->
+  
+</beans>  
